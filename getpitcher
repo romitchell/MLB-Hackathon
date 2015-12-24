@@ -2,56 +2,29 @@
 <html>
 <head>
 <style>
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
 
-table, td, th {
-    border: 1px solid black;
-    padding: 5px;
-}
-
-th {text-align: left;}
 </style>
 </head>
 <body>
 
 <?php
-$servername = "127.0.0.1";
-$username = "root";
-$password = "";
-$dbname = "mlb";
-$pitcher = strval($_GET['pitcher']);
+$servername = "127.0.0.1"; $username = "root"; $password = ""; $dbname = "mlb"; $tbname = "2013season";
+$team = strval($_GET['team']);
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 // Check connection
 if (!$conn) {
 die("Connection failed: " . mysqli_connect_error());
 }
-
-$sql="SELECT DISTINCT pitcher, pitchType FROM 2015ws WHERE pitcher ='".$pitcher."'";
+$sql="SELECT DISTINCT pitcher FROM ".$tbname." WHERE home ='".$team."' AND side ='t' OR visitor ='".$team."' AND side ='b'";
 $pitches = mysqli_query($conn,$sql);
-
-echo "<table>
-<tr>
-<th>Pitch Type</th>
-<th>Usage</th>
-<th>Age</th>
-<th>Hometown</th>
-<th>Job</th>
-</tr>";
-while($row = mysqli_fetch_array($pitches)) {
-    echo "<tr>";
-    echo "<td>" . $row['pitchType'] . "</td>";
-	$result = mysql_query($usage);
-	$count = mysql_result($result, 0); 
-	echo "<td>" . $count['total'] . "</td>";
-	echo "</tr>";
-}
-
-
-echo "</table>";
-mysqli_close($conn);
+echo '<select name="pitchers" onchange="showPitcher(this.value)" class="form-control">
+	<option selected="true" disabled="disabled" value="">Select a Pitcher:</option>';
+	$result = mysqli_query($conn, $sql);
+	while($row = mysqli_fetch_assoc($result)) {
+		echo '<option value="'.$row['pitcher'].'">'.$row['pitcher'].'</option>';
+	}
+	mysqli_close($conn);
+echo '</select>';	
 ?>
 </body>
 </html>
